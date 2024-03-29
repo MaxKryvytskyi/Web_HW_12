@@ -3,7 +3,9 @@ from sqlalchemy.orm import Session
 from datetime import date
 from src.database.db import get_db
 from src.schemas.contact import ContactSchema, ContactResponse, ContactDataUpdate, ContactUpdate
+from src.database.models import User 
 from src.repository import contact as repository_contact 
+from src.services.auth import auth_service
 
 
 router = APIRouter(prefix='/contacts', tags=['contacts'])
