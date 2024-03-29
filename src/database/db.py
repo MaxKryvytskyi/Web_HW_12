@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 
 
 config = configparser.ConfigParser()
-config.read("E:\Git_Files\__Python_GOIT__\__Web_2_0__\Web_HW_11\src\database\config.ini")
+config.read("E:\Git_Files\__Python_GOIT__\__Web_2_0__\Web_HW_12\src\database\config.ini")
 
 USER = config.get("DB", "USER")
 PASSWORD = config.get("DB", "PASSWORD")

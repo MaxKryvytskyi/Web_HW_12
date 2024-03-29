@@ -10,7 +10,7 @@ from src.database.db import get_db
 from src.repository import users as repository_users
 
 config = configparser.ConfigParser()
-config.read("E:\Git_Files\__Python_GOIT__\__Web_2_0__\Web_HW_11\src\database\config.ini")
+config.read("E:\Git_Files\__Python_GOIT__\__Web_2_0__\Web_HW_12\config.ini")
 
 
 class Auth:
