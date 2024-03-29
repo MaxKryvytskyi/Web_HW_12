@@ -1,20 +1,22 @@
+import configparser
 from datetime import datetime, timedelta
 from typing import Optional
-
 from fastapi import Depends, HTTPException, status
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
-
 from src.database.db import get_db
 from src.repository import users as repository_users
+
+config = configparser.ConfigParser()
+config.read("E:\Git_Files\__Python_GOIT__\__Web_2_0__\Web_HW_11\src\database\config.ini")
 
 
 class Auth:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    SECRET_KEY = "974790aec4ac460bdc11645decad4dce7c139b7f2982b7428ec44e886ea588c6"  # TODO прибрать в ENV файл
-    ALGORITHM = "HS256"
+    SECRET_KEY = config.get("HASH", "SECRET_KEY")   
+    ALGORITHM = config.get("HASH", "ALGORITHM")
 
     def verify_password(self, plain_password, hashed_password):
         return self.pwd_context.verify(plain_password, hashed_password)
