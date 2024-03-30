@@ -8,15 +8,14 @@ from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 from src.database.db import get_db
 from src.repository import users as repository_users
+from src.config.config import Config
 
-config = configparser.ConfigParser()
-config.read("E:\Git_Files\__Python_GOIT__\__Web_2_0__\Web_HW_12\config.ini")
 
 
 class Auth:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    SECRET_KEY = config.get("HASH", "SECRET_KEY")   
-    ALGORITHM = config.get("HASH", "ALGORITHM")
+    SECRET_KEY = Config.SECRET_KEY
+    ALGORITHM = Config.ALGORITHM
 
     def verify_password(self, plain_password, hashed_password):
         return self.pwd_context.verify(plain_password, hashed_password)
