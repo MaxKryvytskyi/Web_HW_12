@@ -1,4 +1,4 @@
-from faker import Faker
+# from faker import Faker
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.sql.sqltypes import Date
 from sqlalchemy.orm import declarative_base
