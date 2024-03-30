@@ -7,17 +7,11 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 from starlette import status
-
+from src.config.config import Config
 from db import get_db, User
 
-import configparser
-
-config = configparser.ConfigParser()
-config.read("E:\Git_Files\__Python_GOIT__\__Web_2_0__\Web_HW_12\database\config.ini")
-
-SECRET_KEY = config.get("HASH", "SECRET_KEY")
-ALGORITHM = config.get("HASH", "ALGORITHM")
-print(SECRET_KEY, ALGORITHM)
+SECRET_KEY = Config.SECRET_KEY
+ALGORITHM = Config.ALGORITHM
 
 class Hash:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -34,17 +28,13 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 # define a function to generate a new access token
 async def create_access_token(data: dict, expires_delta: Optional[float] = None):
-    print("-"*100)
     to_encode = data.copy()
-    print(to_encode)
     if expires_delta:
         expire = datetime.utcnow() + timedelta(seconds=expires_delta)
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    print("-"*100)
-    print(encoded_jwt)
     return encoded_jwt
 
 

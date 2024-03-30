@@ -32,9 +32,7 @@ async def signup(body: UserModel, db: Session = Depends(get_db)):
 @app.post("/login")
 async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == body.username).first()
-    print(body.password, body.username)
-
-    print(user.password == '$2b$12$zoksLYH3zccUXkM6sOmuTO.ksVKBXO4czNxBYSHyqhV9TkXWeGycS')
+ 
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email")
     if not hash_handler.verify_password(body.password, user.password):
