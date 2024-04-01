@@ -7,13 +7,13 @@ from src.repository import users as repository_users
 from src.schemas.user import UserSchema, TokenModel, UserResponse
 from src.services.auth import auth_service
 
-router = APIRouter(prefix='/users', tags=['users'])
+router = APIRouter(prefix='/auth', tags=['auth'])
 get_refresh_token = HTTPBearer()
 
 
 @router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def signup(body: UserSchema, db: Session = Depends(get_db)):
-    print(body.username, body.password, body.email)
+
     exist_user = await repository_users.get_user_by_email(body.email, db)
     if exist_user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Account already exists")
@@ -30,8 +30,8 @@ async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depen
     if not auth_service.verify_password(body.password, user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid password")
     # Generate JWT
-    print(user.username, user.password)
-    access_token = await auth_service.create_access_token(data={"sub": user.email, "test": "Сергій Багмет"})
+ 
+    access_token = await auth_service.create_access_token(data={"sub": user.email})
     refresh_token = await auth_service.create_refresh_token(data={"sub": user.email})
     await repository_users.update_token(user, refresh_token, db)
     return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}

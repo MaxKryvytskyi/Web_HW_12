@@ -40,6 +40,7 @@ async def update_contact(contact_id: int, body: ContactUpdate, db: Session):
         contact.phone = body.phone
         contact.birthday = body.birthday
         contact.data = body.data
+        contact.user_id = body.user_id
         db.commit()
     return contact
 

@@ -62,6 +62,7 @@ class Auth:
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
+        print(token)
 
         try:
             # Decode JWT

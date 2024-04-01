@@ -31,6 +31,7 @@ class ContactResponse(BaseModel):
     phone: str
     birthday: date 
     data: str
+    user_id: int
 
     class Config:
         from_attributes = True
