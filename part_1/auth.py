@@ -9,7 +9,7 @@ from sqlalchemy import or_
 from jose import JWTError, jwt
 from starlette import status
 from src.config.config import Config
-from db import get_db, User
+from part_1.db import get_db, User
 
 
 

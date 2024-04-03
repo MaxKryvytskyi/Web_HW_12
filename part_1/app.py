@@ -5,8 +5,8 @@ from sqlalchemy import or_
 from pydantic import BaseModel, EmailStr
 import uvicorn
 
-from auth import create_access_token, create_refresh_token, get_current_user, get_email_form_refresh_token, Hash
-from db import User, get_db
+from part_1.auth import create_access_token, create_refresh_token, get_current_user, get_email_form_refresh_token, Hash
+from part_1.db import User, get_db
 
 app = FastAPI()
 security = HTTPBearer()
