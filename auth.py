@@ -88,6 +88,4 @@ async def get_email_form_refresh_token(refresh_token: str):
 
 
  
-# async def update_token(user: User, token: str | None, db: Session):
-#     user.refresh_token = token
-#     await db.commit()
+ 
