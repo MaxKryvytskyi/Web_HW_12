@@ -1,16 +1,18 @@
+import configparser
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from src.config.config import Config
 
-USER = Config.USER
-PASSWORD = Config.PASSWORD
-DB_NAME = Config.DB_NAME
-DOMAIN = Config.DOMAIN
-PORT = Config.PORT
+config = configparser.ConfigParser()
+config.read('src/config/config.ini')
 
-SQLALCHEMY_DATABASE_URL = f"postgresql+psycopg2://{USER}:{PASSWORD}@{DOMAIN}:{PORT}/{DB_NAME}"
+user = config.get('DB', 'user')
+password = config.get('DB', 'pass')
+db_name = config.get('DB', 'db_name')
+domain = config.get('DB', 'domain')
+port = config.get('DB', 'port')
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+
+engine = create_engine(f"postgresql+psycopg2://{user}:{password}@{domain}:{port}/{db_name}")
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
