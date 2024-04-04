@@ -1,9 +1,11 @@
-# from faker import Faker
+from faker import Faker
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.sql.sqltypes import Date
 from sqlalchemy.orm import declarative_base
 from src.database.db import SessionLocal
 import random
+ 
+fake = Faker()
 
 country_code = "+380"
 
@@ -30,7 +32,7 @@ def generate_fake_contacts(num: int = 10):
         birthday = Column(Date)
         data =  Column(String(250))
 
-    fake = Faker()
+
     db = SessionLocal()
 
     for _ in range(num):
