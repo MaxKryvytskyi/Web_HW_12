@@ -3,13 +3,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 config = configparser.ConfigParser()
-config.read('src/config/config.ini')
+config.read('part_2/src/config/config.ini')
 
-user = config.get('DB', 'user')
-password = config.get('DB', 'pass')
-db_name = config.get('DB', 'db_name')
-domain = config.get('DB', 'domain')
-port = config.get('DB', 'port')
+user = config.get('Security', 'USER')
+print(user)
+password = config.get('Security', 'PASSWORD')
+db_name = config.get('Security', 'DB_NAME')
+domain = config.get('Security', 'DOMAIN')
+port = config.get('Security', 'PORT')
 
 
 engine = create_engine(f"postgresql+psycopg2://{user}:{password}@{domain}:{port}/{db_name}")
