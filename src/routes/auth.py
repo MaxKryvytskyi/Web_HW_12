@@ -26,7 +26,6 @@ async def signup(body: UserSchema, db: Session = Depends(get_db)):
 
 @router.post("/login",  response_model=TokenModel, status_code=status.HTTP_201_CREATED)
 async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    print(body.username, body.password)
     user = await repository_users.get_user_by_email(body.username, db)
     if user is None:
         user = await repository_users.get_user_by_username(body.username, db)

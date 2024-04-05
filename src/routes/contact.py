@@ -15,7 +15,7 @@ router = APIRouter(prefix='/contacts', tags=['contacts'])
 @router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
 async def create_contact(body: ContactSchema, db: Session = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
     user_id = current_user.id
-    return await repository_contact.create_contact(body, user_id, db)
+    return await repository_contact.create_contact(user_id, body, db)
 # 
 
 @router.get("/", response_model=list[ContactResponse])
@@ -43,41 +43,35 @@ async def remove_contact(contact_id: int, db: Session = Depends(get_db), current
     return contact
 #
 
-
-
-
-
-
-
 @router.put("/{contact_id}", response_model=ContactResponse)
 async def update_contact(contact_id: int, body: ContactUpdate, db: Session = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
     user_id = current_user.id
-    contact = await repository_contact.update_contact(contact_id, body, db)
+    contact = await repository_contact.update_contact(user_id, contact_id, body, db)
     if contact is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
     return contact
-
+#
 
 @router.patch("/{contact_id}", response_model=ContactResponse)
 async def update_data_contact(contact_id: int, body: ContactDataUpdate, db: Session = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
     user_id = current_user.id
-    contact = await repository_contact.update_data_contact(contact_id, body, db)
+    contact = await repository_contact.update_data_contact(user_id, contact_id, body, db)
     if contact is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found")
     return contact
+#
 
-
-@router.get("/birstdays", response_model=list[ContactResponse])
+@router.get("/birstdays/all", response_model=list[ContactResponse])
 async def get_birstdays(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
     user_id = current_user.id
-    contacts = await repository_contact.get_birstdays(skip, limit, db)
+    contacts = await repository_contact.get_birstdays(user_id, skip, limit, db)
     if contacts is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Birstday not found")
     return contacts
+#
 
 
-
-@router.get("/search", response_model=list[ContactResponse])
+@router.get("/search/all", response_model=list[ContactResponse])
 async def search_contacts(
     first_name: str = Query(None, description="Search contacts by first name"),
     last_name: str = Query(None, description="Search contacts by last name"),
@@ -87,7 +81,8 @@ async def search_contacts(
     db: Session = Depends(get_db), 
     current_user: User = Depends(auth_service.get_current_user)):
     user_id = current_user.id
-    contacts = await repository_contact.search_contacts(first_name, last_name, email, phone, birthday, db)
+    contacts = await repository_contact.search_contacts(user_id, first_name, last_name, email, phone, birthday, db)
+ 
     if contacts is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Birstday not found")
     return contacts

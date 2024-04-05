@@ -6,7 +6,7 @@ from src.database.models import Contact
 from src.schemas.contact import ContactUpdate, ContactSchema, ContactDataUpdate, ContactResponse
 
 
-async def create_contact(body: ContactSchema, user_id: int, db: Session):
+async def create_contact(user_id: int, body: ContactSchema,  db: Session):
     contact = Contact(
         first_name = body.first_name,
         last_name = body.last_name,
@@ -27,12 +27,12 @@ async def get_contacts(user_id: int, skip: int, limit: int, db: Session):
     return contacts
 
 
-async def get_contact(user_id, contact_id: int, db: Session):
+async def get_contact(user_id: int, contact_id: int, db: Session):
     contact = db.query(Contact).filter(and_(Contact.id==contact_id, Contact.user_id==user_id)).first()
     return contact
 
 
-async def remove_contact(user_id:int, contact_id: int, db: Session):
+async def remove_contact(user_id: int, contact_id: int, db: Session):
     contact = db.query(Contact).filter(and_(Contact.id==contact_id, Contact.user_id==user_id)).first()
     if contact:
         db.delete(contact)
@@ -40,11 +40,8 @@ async def remove_contact(user_id:int, contact_id: int, db: Session):
     return contact
 
 
-
-
-
-async def update_contact(contact_id: int, body: ContactUpdate, db: Session):
-    contact = db.query(Contact).filter(Contact.id==contact_id).first()
+async def update_contact(user_id: int, contact_id: int, body: ContactUpdate, db: Session):
+    contact = db.query(Contact).filter(and_(Contact.id==contact_id, Contact.user_id==user_id)).first()
     if contact:
         contact.first_name = body.first_name
         contact.last_name = body.last_name
@@ -52,30 +49,25 @@ async def update_contact(contact_id: int, body: ContactUpdate, db: Session):
         contact.phone = body.phone
         contact.birthday = body.birthday
         contact.data = body.data
-        contact.user_id = body.user_id
         db.commit()
     return contact
 
 
-async def update_data_contact(contact_id: int, body: ContactDataUpdate, db: Session):
-    contact = db.query(Contact).filter(Contact.id==contact_id).first()
+async def update_data_contact(user_id: int, contact_id: int, body: ContactDataUpdate, db: Session):
+    contact = db.query(Contact).filter(and_(Contact.user_id==user_id, Contact.id==contact_id)).first()
     if contact:
         contact.data = body.data
         db.commit()
     return contact
 
 
-
-
-
-async def get_birstdays(skip: int, limit: int, db: Session):
+async def get_birstdays(user_id: int, skip: int, limit: int, db: Session):
     today = datetime.today()
     seven_days_later = today + timedelta(days=7)
-    contact_birthdays = db.query(Contact).filter(
+    contact_birthdays = db.query(Contact).filter(and_(Contact.user_id==user_id,
         text("TO_CHAR(birthday, 'MM-DD') BETWEEN :start_date AND :end_date")).params(
         start_date=today.strftime('%m-%d'), 
-        end_date=seven_days_later.strftime('%m-%d')).offset(skip).limit(limit).all()
-    
+        end_date=seven_days_later.strftime('%m-%d'))).offset(skip).limit(limit).all()
     contact_list = []
     
     for contact in contact_birthdays:
@@ -86,14 +78,18 @@ async def get_birstdays(skip: int, limit: int, db: Session):
             email=contact.email,
             phone=contact.phone,
             birthday=contact.birthday,
-            data=contact.data)
+            data=contact.data,
+            user_id=contact.user_id)
         contact_list.append(contact_response)
     return contact_list
 
 
 
-async def search_contacts(first_name: str, last_name: str, email: str, phone: str, birthday: date, db: Session):
-    query = db.query(Contact)
+
+
+async def search_contacts(user_id: int, first_name: str, last_name: str, email: str, phone: str, birthday: date, db: Session):
+    query = db.query(Contact).filter(and_(Contact.user_id==user_id))
+ 
     contacts = []
     if first_name:
         query1 = query.filter(Contact.first_name.ilike(f"%{first_name}%"))
@@ -102,7 +98,7 @@ async def search_contacts(first_name: str, last_name: str, email: str, phone: st
         query1 = query.filter(Contact.last_name.ilike(f"%{last_name}%"))
         contacts.extend(query1.all())
     if email:
-        query1 = query.filter(Contact.email.ilike(f"%{email}%"))       
+        query1 = query.filter(Contact.email.ilike(f"%{email}%"))     
         contacts.extend(query1.all())
     if phone:
         query1 = query.filter(Contact.phone.ilike(f"%{phone}%"))       
@@ -110,4 +106,35 @@ async def search_contacts(first_name: str, last_name: str, email: str, phone: st
     if birthday:
         query1 = query.filter(func.DATE(Contact.birthday) == birthday)
         contacts.extend(query1.all())
+ 
     return list(set(contacts))
+
+
+
+
+
+
+
+# async def search_contacts(user_id: int, first_name: str, last_name: str, email: str, phone: str, birthday: date, db: Session):
+    
+#     query = db.query(Contact).filter(Contact.user_id==user_id)
+ 
+#     contacts = []
+#     if first_name:
+#         query1 = query.filter(Contact.first_name.ilike(f"%{first_name}%"))
+ 
+#     if last_name:
+#         query1 = query.filter(Contact.last_name.ilike(f"%{last_name}%"))
+ 
+#     if email:
+#         query1 = query.filter(Contact.email.ilike(f"%{email}%"))     
+ 
+#     if phone:
+#         query1 = query.filter(Contact.phone.ilike(f"%{phone}%"))       
+ 
+#     if birthday:
+#         query1 = query.filter(func.DATE(Contact.birthday) == birthday)
+    
+#     contacts = await query1.all()
+ 
+#     return list(set(contacts))
