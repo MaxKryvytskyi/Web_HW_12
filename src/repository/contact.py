@@ -84,9 +84,6 @@ async def get_birstdays(user_id: int, skip: int, limit: int, db: Session):
     return contact_list
 
 
-
-
-
 async def search_contacts(user_id: int, first_name: str, last_name: str, email: str, phone: str, birthday: date, db: Session):
     query = db.query(Contact).filter(and_(Contact.user_id==user_id))
  
@@ -108,33 +105,3 @@ async def search_contacts(user_id: int, first_name: str, last_name: str, email: 
         contacts.extend(query1.all())
  
     return list(set(contacts))
-
-
-
-
-
-
-
-# async def search_contacts(user_id: int, first_name: str, last_name: str, email: str, phone: str, birthday: date, db: Session):
-    
-#     query = db.query(Contact).filter(Contact.user_id==user_id)
- 
-#     contacts = []
-#     if first_name:
-#         query1 = query.filter(Contact.first_name.ilike(f"%{first_name}%"))
- 
-#     if last_name:
-#         query1 = query.filter(Contact.last_name.ilike(f"%{last_name}%"))
- 
-#     if email:
-#         query1 = query.filter(Contact.email.ilike(f"%{email}%"))     
- 
-#     if phone:
-#         query1 = query.filter(Contact.phone.ilike(f"%{phone}%"))       
- 
-#     if birthday:
-#         query1 = query.filter(func.DATE(Contact.birthday) == birthday)
-    
-#     contacts = await query1.all()
- 
-#     return list(set(contacts))

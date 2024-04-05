@@ -86,3 +86,4 @@ async def search_contacts(
     if contacts is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Birstday not found")
     return contacts
+#
