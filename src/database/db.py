@@ -1,9 +1,9 @@
-import configparser
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import configparser
 
 config = configparser.ConfigParser()
-config.read('part_2/src/config/config.ini')
+config.read('src/config/config.ini')
 
 user = config.get('Security', 'USER')
 password = config.get('Security', 'PASSWORD')

@@ -7,14 +7,15 @@ from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 from src.database.db import get_db
 from src.repository import users as repository_users
-from src.config.config import Config
+import configparser
 
-
+config = configparser.ConfigParser()
+config.read('src/config/config.ini')
 
 class Auth:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    SECRET_KEY = Config.SECRET_KEY
-    ALGORITHM = Config.ALGORITHM
+    SECRET_KEY = config.get('Security', 'SECRET_KEY')
+    ALGORITHM = config.get('Security', 'ALGORITHM')
 
     def verify_password(self, plain_password, hashed_password):
         return self.pwd_context.verify(plain_password, hashed_password)
@@ -30,7 +31,7 @@ class Auth:
         if expires_delta:
             expire = datetime.utcnow() + timedelta(seconds=expires_delta)
         else:
-            expire = datetime.utcnow() + timedelta(minutes=15)
+            expire = datetime.utcnow() + timedelta(minutes=60)
         to_encode.update({"iat": datetime.utcnow(), "exp": expire, "scope": "access_token"})
         encoded_access_token = jwt.encode(to_encode, self.SECRET_KEY, algorithm=self.ALGORITHM)
         return encoded_access_token

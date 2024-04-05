@@ -1,34 +1,46 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import text, func
+from sqlalchemy import text, func, and_
 from datetime import datetime, timedelta, date
 
 from src.database.models import Contact
 from src.schemas.contact import ContactUpdate, ContactSchema, ContactDataUpdate, ContactResponse
 
 
-async def get_contacts(skip: int, limit: int, db: Session):
-    contacts = db.query(Contact).offset(skip).limit(limit).all()
-    return contacts
-
-
-async def get_contact(contact_id: int, db: Session):
-    contact = db.query(Contact).filter(Contact.id==contact_id).first()
-    return contact
-
-
-async def create_contact(body: ContactSchema, db: Session):
+async def create_contact(body: ContactSchema, user_id: int, db: Session):
     contact = Contact(
         first_name = body.first_name,
         last_name = body.last_name,
         email = body.email,
         phone = body.phone,
         birthday = body.birthday,
-        data = body.data
+        data = body.data,
+        user_id = user_id
     )
     db.add(contact)
     db.commit()
     db.refresh(contact)
     return contact
+
+
+async def get_contacts(user_id: int, skip: int, limit: int, db: Session):
+    contacts = db.query(Contact).filter(Contact.user_id==user_id).offset(skip).limit(limit).all()
+    return contacts
+
+
+async def get_contact(user_id, contact_id: int, db: Session):
+    contact = db.query(Contact).filter(and_(Contact.id==contact_id, Contact.user_id==user_id)).first()
+    return contact
+
+
+async def remove_contact(user_id:int, contact_id: int, db: Session):
+    contact = db.query(Contact).filter(and_(Contact.id==contact_id, Contact.user_id==user_id)).first()
+    if contact:
+        db.delete(contact)
+        db.commit()
+    return contact
+
+
+
 
 
 async def update_contact(contact_id: int, body: ContactUpdate, db: Session):
@@ -53,12 +65,7 @@ async def update_data_contact(contact_id: int, body: ContactDataUpdate, db: Sess
     return contact
 
 
-async def remove_contact(contact_id: int, db: Session):
-    contact = db.query(Contact).filter(Contact.id==contact_id).first()
-    if contact:
-        db.delete(contact)
-        db.commit()
-    return contact
+
 
 
 async def get_birstdays(skip: int, limit: int, db: Session):
