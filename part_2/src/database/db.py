@@ -6,7 +6,6 @@ config = configparser.ConfigParser()
 config.read('part_2/src/config/config.ini')
 
 user = config.get('Security', 'USER')
-print(user)
 password = config.get('Security', 'PASSWORD')
 db_name = config.get('Security', 'DB_NAME')
 domain = config.get('Security', 'DOMAIN')

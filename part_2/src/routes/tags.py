@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from src.database.db import get_db
 from src.database.models import User
 from src.schemas.schemas import TagModel, TagResponse
-from src.repository import tags as repository_tags
+import src.repository.tags as repository_tags
 from src.services.auth import auth_service
 
 router = APIRouter(prefix='/tags', tags=["tags"])

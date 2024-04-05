@@ -4,10 +4,23 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
-from src.database.models import Base
 
+import sys
+import os
+sys.path.append(os.path.join(sys.path[0], 'src'))
+from database.models import Base
+
+import configparser
 config = context.config
- 
+
+app_config = configparser.ConfigParser()
+app_config.read('part_2/src/config/config.ini')
+
+
+
+SQLALCHEMY_DATABASE_URL = app_config.get('Security', 'SQLALCHEMY_DATABASE_URL')
+config.get_main_option("sqlalchemy.url", SQLALCHEMY_DATABASE_URL)
+
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
